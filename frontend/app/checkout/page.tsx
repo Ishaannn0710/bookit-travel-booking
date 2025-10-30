@@ -291,7 +291,7 @@ onClick={async () => {
   try {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-const response = await fetch(`${API_URL}/api/promo/validate`, {
+const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/promo/validate`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ code: promoCode, subtotal: bookingDetails.subtotal })
