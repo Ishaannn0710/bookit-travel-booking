@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Minus, Plus } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function ExperienceDetails() {
   const [experience, setExperience] = useState<any>(null);
   const [slots, setSlots] = useState<any[]>([]);

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function Checkout() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -289,14 +291,11 @@ onClick={async () => {
   try {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-const response = await fetch(`${API_URL}/api/promo/validate`,  {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        code: promoCode,
-        subtotal: bookingDetails.subtotal
-      })
-    });
+const response = await fetch(`${API_URL}/api/promo/validate`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ code: promoCode, subtotal: bookingDetails.subtotal })
+});
 
     const data = await response.json();
 

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 interface Experience {
   id: string;
   title: string;
@@ -112,26 +114,26 @@ export default function Home() {
   }, [searchQuery, experiences]);
 
   const fetchExperiences = async () => {
-  try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-const response = await fetch(`${API_URL}/api/experiences`);
-    const data = await response.json();
-    // Use backend data if available AND has 8+ items, otherwise use mock
-    if (data.data && data.data.length >= 8) {
-      setExperiences(data.data);
-      setFilteredExperiences(data.data);
-    } else {
+    try {
+      // Use the API_URL constant directly
+      const response = await fetch(`${API_URL}/api/experiences`);
+      const data = await response.json();
+      
+      if (data.data && data.data.length >= 8) {
+        setExperiences(data.data);
+        setFilteredExperiences(data.data);
+      } else {
+        setExperiences(mockExperiences);
+        setFilteredExperiences(mockExperiences);
+      }
+    } catch (error) {
+      console.error('Error:', error);
       setExperiences(mockExperiences);
       setFilteredExperiences(mockExperiences);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Error:', error);
-    setExperiences(mockExperiences);
-    setFilteredExperiences(mockExperiences);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
   const handleCardClick = (id: string) => {
     window.location.href = `/experiences/${id}`;
   };
