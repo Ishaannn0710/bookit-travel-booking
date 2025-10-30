@@ -19,33 +19,37 @@ export default function ExperienceDetails() {
   }, []);
 
   const fetchExperience = async () => {
-    try {
-      // Get experience ID from URL
-      const pathParts = window.location.pathname.split('/');
-      const id = pathParts[pathParts.length - 1];
+  try {
+    // Get experience ID from URL
+    const pathParts = window.location.pathname.split('/');
+    const id = pathParts[pathParts.length - 1];
 
-    const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/experiences`);
-      const data = await response.json();
+    console.log('Fetching experience with ID:', id); // Debug log
 
-      if (data.success) {
-        setExperience(data.data.experience);
-        setSlots(data.data.slots);
-        
-        // Set default selected date and time if slots available
-        if (data.data.slots.length > 0) {
-          const firstSlot = data.data.slots[0];
-          const date = new Date(firstSlot.date);
-          setSelectedDate(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-          setSelectedTime(firstSlot.time);
-          setSelectedSlot(firstSlot);
-        }
+    const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/experiences/${id}`);
+    const data = await response.json();
+
+    console.log('API Response:', data); // Debug log
+
+    if (data.success && data.data) {
+      setExperience(data.data.experience);
+      setSlots(data.data.slots || []);
+      
+      // Set default selected date and time if slots available
+      if (data.data.slots && data.data.slots.length > 0) {
+        const firstSlot = data.data.slots[0];
+        const date = new Date(firstSlot.date);
+        setSelectedDate(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        setSelectedTime(firstSlot.time);
+        setSelectedSlot(firstSlot);
       }
-    } catch (error) {
-      console.error('Error fetching experience:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching experience:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Group slots by date
   const getUniqueDates = () => {
