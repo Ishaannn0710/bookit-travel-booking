@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = 'https://bookit-travel-booking-production.up.railway.app';
 
 interface Experience {
   id: string;
@@ -127,10 +127,8 @@ export default function Home() {
         setFilteredExperiences(mockExperiences);
       }
     } catch (error) {
-      console.error('Error:', error);
-      setExperiences(mockExperiences);
-      setFilteredExperiences(mockExperiences);
-    } finally {
+    console.error('Error fetching experiences:', error);
+  }  finally {
       setIsLoading(false);
     }
   };

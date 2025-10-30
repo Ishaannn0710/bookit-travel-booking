@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = 'https://bookit-travel-booking-production.up.railway.app';
 
 export default function Checkout() {
   const [fullName, setFullName] = useState('');
