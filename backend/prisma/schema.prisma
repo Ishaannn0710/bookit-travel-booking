@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  location    String
+  price       Int
+  imageUrl    String
+  duration    String
+  category    String
+  rating      Float    @default(4.5)
+  reviewCount Int      @default(0)
+  slots       Slot[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([location])
+}
+
+model Slot {
+  id            String      @id @default(uuid())
+  experienceId  String
+  experience    Experience  @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  date          DateTime
+  time          String
+  capacity      Int
+  bookedCount   Int         @default(0)
+  bookings      Booking[]
+  createdAt     DateTime    @default(now())
+
+  @@unique([experienceId, date, time])
+  @@index([experienceId])
+  @@index([date])
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  slotId        String
+  slot          Slot     @relation(fields: [slotId], references: [id])
+  userName      String
+  userEmail     String
+  promoCode     String?
+  quantity      Int      @default(1)
+  subtotal      Int
+  taxes         Int
+  discount      Int      @default(0)
+  total         Int
+  referenceId   String   @unique
+  status        String   @default("confirmed")
+  createdAt     DateTime @default(now())
+
+  @@index([slotId])
+  @@index([referenceId])
+  @@index([userEmail])
+}
+
+model PromoCode {
+  code          String   @id
+  discountType  String
+  discountValue Int
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
