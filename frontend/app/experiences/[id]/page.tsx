@@ -22,7 +22,8 @@ export default function ExperienceDetails() {
       const pathParts = window.location.pathname.split('/');
       const id = pathParts[pathParts.length - 1];
 
-      const response = await fetch(`http://localhost:5000/api/experiences/${id}`);
+     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const response = await fetch(`${API_URL}/api/experiences/${id}`);
       const data = await response.json();
 
       if (data.success) {
