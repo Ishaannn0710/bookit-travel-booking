@@ -12,15 +12,13 @@ export default function Checkout() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [discount, setDiscount] = useState(0);
-const [promoApplied, setPromoApplied] = useState(false);
+  const [promoApplied, setPromoApplied] = useState(false);
 
   useEffect(() => {
-    // Get booking data from sessionStorage
     const storedData = sessionStorage.getItem('bookingData');
     if (storedData) {
       setBookingDetails(JSON.parse(storedData));
     } else {
-      // Fallback data if no booking data found
       setBookingDetails({
         experience: 'Kayaking',
         date: '2025-10-22',
@@ -68,11 +66,11 @@ const [promoApplied, setPromoApplied] = useState(false);
         <div style={{
           maxWidth: '1440px',
           margin: '0 auto',
-          padding: '16px 124px',
+          padding: '16px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '20px'
+          gap: '12px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{
@@ -92,7 +90,7 @@ const [promoApplied, setPromoApplied] = useState(false);
             </div>
           </div>
           <button style={{
-            padding: '12px 32px',
+            padding: '10px 20px',
             backgroundColor: '#FFD643',
             border: 'none',
             borderRadius: '8px',
@@ -118,7 +116,7 @@ const [promoApplied, setPromoApplied] = useState(false);
       <main style={{
         maxWidth: '1440px',
         margin: '0 auto',
-        padding: '0 124px'
+        padding: '0 20px'
       }}>
         <button
           onClick={() => window.history.back()}
@@ -132,7 +130,7 @@ const [promoApplied, setPromoApplied] = useState(false);
             fontSize: '14px',
             fontWeight: 600,
             color: '#000000',
-            padding: '24px 0',
+            padding: '20px 0',
             marginBottom: '16px',
             transition: 'all 0.2s ease'
           }}
@@ -149,20 +147,20 @@ const [promoApplied, setPromoApplied] = useState(false);
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '739px 387px',
-          gap: '32px'
+          gridTemplateColumns: window.innerWidth >= 768 ? '1fr 387px' : '1fr',
+          gap: '24px'
         }}>
           {/* Left Column - Form */}
           <div style={{
             backgroundColor: '#FEFEFE',
             border: '1px solid #F0F0F0',
             borderRadius: '12px',
-            padding: '24px',
+            padding: '20px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
+              gridTemplateColumns: window.innerWidth >= 640 ? '1fr 1fr' : '1fr',
               gap: '16px',
               marginBottom: '16px'
             }}>
@@ -251,7 +249,7 @@ const [promoApplied, setPromoApplied] = useState(false);
               }}>
                 Promo code
               </label>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: window.innerWidth < 400 ? 'wrap' : 'nowrap' }}>
                 <input
                   type="text"
                   placeholder="Enter code"
@@ -259,6 +257,7 @@ const [promoApplied, setPromoApplied] = useState(false);
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   style={{
                     flex: '1',
+                    minWidth: window.innerWidth < 400 ? '100%' : '0',
                     padding: '12px 16px',
                     backgroundColor: '#EFEFEF',
                     border: '1px solid #E9E9E9',
@@ -277,64 +276,63 @@ const [promoApplied, setPromoApplied] = useState(false);
                   }}
                 />
                 <button 
-onClick={async () => {
-  if (!promoCode) {
-    alert('Please enter a promo code');
-    return;
-  }
+                  onClick={async () => {
+                    if (!promoCode) {
+                      alert('Please enter a promo code');
+                      return;
+                    }
 
-  if (promoApplied) {
-    alert('Promo code already applied');
-    return;
-  }
+                    if (promoApplied) {
+                      alert('Promo code already applied');
+                      return;
+                    }
 
-  try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                    try {
+                      const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/promo/validate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code: promoCode, subtotal: bookingDetails.subtotal })
+                      });
 
-const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/promo/validate`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ code: promoCode, subtotal: bookingDetails.subtotal })
-});
+                      const data = await response.json();
 
-    const data = await response.json();
-
-    if (data.success && data.data.valid) {
-      setDiscount(data.data.discount);
-      setPromoApplied(true);
-    } else {
-      alert('Invalid promo code');
-    }
-  } catch (error) {
-    console.error('Error validating promo:', error);
-    alert('Failed to validate promo code');
-  }
-}}
-  style={{
-    padding: '12px 24px',
-    backgroundColor: '#000000',
-    color: '#FFFFFF',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    transition: 'all 0.3s ease'
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.backgroundColor = '#333333';
-    e.currentTarget.style.transform = 'translateY(-2px)';
-    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.backgroundColor = '#000000';
-    e.currentTarget.style.transform = 'translateY(0)';
-    e.currentTarget.style.boxShadow = 'none';
-  }}
->
-  Apply
-</button>
+                      if (data.success && data.data.valid) {
+                        setDiscount(data.data.discount);
+                        setPromoApplied(true);
+                      } else {
+                        alert('Invalid promo code');
+                      }
+                    } catch (error) {
+                      console.error('Error validating promo:', error);
+                      alert('Failed to validate promo code');
+                    }
+                  }}
+                  style={{
+                    padding: '12px 24px',
+                    backgroundColor: '#000000',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    width: window.innerWidth < 400 ? '100%' : 'auto',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#333333';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#000000';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  Apply
+                </button>
               </div>
             </div>
 
@@ -429,43 +427,44 @@ const response = await fetch(`https://bookit-travel-booking-production.up.railwa
                 <span style={{ fontSize: '14px', fontWeight: 600, color: '#000000' }}>₹{bookingDetails.subtotal}</span>
               </div>
 
-<div style={{
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: discount > 0 ? '12px' : '16px',
-  paddingBottom: discount > 0 ? '0' : '16px',
-  borderBottom: discount > 0 ? 'none' : '1px solid #F0F0F0'
-}}>
-  <span style={{ fontSize: '14px', color: '#6B7280' }}>Taxes</span>
-  <span style={{ fontSize: '14px', fontWeight: 600, color: '#000000' }}>₹{bookingDetails.taxes}</span>
-</div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: discount > 0 ? '12px' : '16px',
+                paddingBottom: discount > 0 ? '0' : '16px',
+                borderBottom: discount > 0 ? 'none' : '1px solid #F0F0F0'
+              }}>
+                <span style={{ fontSize: '14px', color: '#6B7280' }}>Taxes</span>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#000000' }}>₹{bookingDetails.taxes}</span>
+              </div>
 
-{discount > 0 && (
-  <div style={{
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '16px',
-    paddingBottom: '16px',
-    borderBottom: '1px solid #F0F0F0'
-  }}>
-    <span style={{ fontSize: '14px', color: '#10B981' }}>Discount</span>
-    <span style={{ fontSize: '14px', fontWeight: 600, color: '#10B981' }}>-₹{discount}</span>
-  </div>
-)}
+              {discount > 0 && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                  paddingBottom: '16px',
+                  borderBottom: '1px solid #F0F0F0'
+                }}>
+                  <span style={{ fontSize: '14px', color: '#10B981' }}>Discount</span>
+                  <span style={{ fontSize: '14px', fontWeight: 600, color: '#10B981' }}>-₹{discount}</span>
+                </div>
+              )}
 
-<div style={{
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '24px'
-}}>
-  <span style={{ fontSize: '18px', fontWeight: 700, color: '#000000' }}>Total</span>
-  <span style={{ fontSize: '24px', fontWeight: 700, color: '#000000' }}>
-    ₹{bookingDetails.subtotal + bookingDetails.taxes - discount}
-  </span>
-</div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '24px'
+              }}>
+                <span style={{ fontSize: '18px', fontWeight: 700, color: '#000000' }}>Total</span>
+                <span style={{ fontSize: '24px', fontWeight: 700, color: '#000000' }}>
+                  ₹{bookingDetails.subtotal + bookingDetails.taxes - discount}
+                </span>
+              </div>
+
               <button
                 onClick={() => {
                   if (!fullName || !email) {
@@ -481,7 +480,6 @@ const response = await fetch(`https://bookit-travel-booking-production.up.railwa
                     return;
                   }
                   
-                  // Store data for confirmation page
                   sessionStorage.setItem('confirmationData', JSON.stringify({
                     ...bookingDetails,
                     userName: fullName,

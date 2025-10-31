@@ -19,7 +19,7 @@ export default function Confirmation() {
         <div style={{
           maxWidth: '1440px',
           margin: '0 auto',
-          padding: '16px 124px',
+          padding: '16px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -45,7 +45,7 @@ export default function Confirmation() {
 
           {/* Search Button */}
           <button style={{
-            padding: '12px 32px',
+            padding: '10px 20px',
             backgroundColor: '#FFD643',
             border: 'none',
             borderRadius: '8px',
@@ -62,7 +62,7 @@ export default function Confirmation() {
       <main style={{
         maxWidth: '1440px',
         margin: '0 auto',
-        padding: '80px 124px',
+        padding: '60px 20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -71,21 +71,26 @@ export default function Confirmation() {
       }}>
         {/* Success Icon */}
         <div style={{
-          width: '80px',
-          height: '80px',
+          width: window.innerWidth >= 640 ? '80px' : '64px',
+          height: window.innerWidth >= 640 ? '80px' : '64px',
           backgroundColor: '#10B981',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '32px'
+          marginBottom: window.innerWidth >= 640 ? '32px' : '24px'
         }}>
-          <Check style={{ width: '48px', height: '48px', color: '#FFFFFF', strokeWidth: 3 }} />
+          <Check style={{ 
+            width: window.innerWidth >= 640 ? '48px' : '36px', 
+            height: window.innerWidth >= 640 ? '48px' : '36px', 
+            color: '#FFFFFF', 
+            strokeWidth: 3 
+          }} />
         </div>
 
         {/* Heading */}
         <h1 style={{
-          fontSize: '32px',
+          fontSize: window.innerWidth >= 640 ? '32px' : '24px',
           fontWeight: 700,
           color: '#000000',
           margin: '0 0 16px 0',
@@ -96,7 +101,7 @@ export default function Confirmation() {
 
         {/* Reference ID */}
         <p style={{
-          fontSize: '16px',
+          fontSize: window.innerWidth >= 640 ? '16px' : '14px',
           color: '#6B7280',
           margin: '0 0 32px 0',
           textAlign: 'center'

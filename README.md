@@ -1,36 +1,181 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BookIt: Travel Experiences Booking Platform
 
-## Getting Started
+A full-stack web application for browsing and booking travel experiences with real-time slot availability.
 
-First, run the development server:
+## 🚀 Live Demo
 
+- **Frontend:** https://bookit-travel-booking-tan.vercel.app
+- **Backend API:** https://bookit-travel-booking-production.up.railway.app
+
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework:** Next.js 14 with TypeScript
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Deployment:** Vercel
+
+### Backend
+- **Framework:** Node.js with Express
+- **Database:** PostgreSQL with Prisma ORM
+- **Deployment:** Railway
+
+## ✨ Features
+
+- Browse travel experiences with real-time availability
+- Select dates and time slots for bookings
+- Apply promo codes for discounts
+- Responsive design for mobile and desktop
+- Real-time slot availability updates
+- Booking confirmation system
+
+## 📋 API Endpoints
+
+### Experiences
+- `GET /api/experiences` - Get all experiences
+- `GET /api/experiences/:id` - Get specific experience with slots
+
+### Bookings
+- `POST /api/bookings` - Create a new booking
+
+### Promo Codes
+- `POST /api/promo/validate` - Validate promo code
+
+## 🏃 Local Development
+
+### Prerequisites
+- Node.js 18+ installed
+- PostgreSQL database
+- npm or yarn package manager
+
+### Backend Setup
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/bookit-travel-booking.git
+cd bookit-travel-booking/backend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Create `.env` file:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/bookit"
+PORT=5000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run database migrations:
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
 
-## Learn More
+5. Start the server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Backend will run on `http://localhost:5000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Frontend Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Navigate to frontend directory:
+```bash
+cd ../frontend
+```
 
-## Deploy on Vercel
+2. Install dependencies:
+```bash
+npm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Create `.env.local` file:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Start the development server:
+```bash
+npm run dev
+```
+
+Frontend will run on `http://localhost:3000`
+
+## 🗄️ Database Schema
+
+### Experience
+- id (UUID)
+- title (String)
+- description (String)
+- location (String)
+- price (Integer)
+- duration (String)
+- category (String)
+- imageUrl (String)
+
+### Slot
+- id (UUID)
+- experienceId (Foreign Key)
+- date (DateTime)
+- time (String)
+- capacity (Integer)
+- bookedCount (Integer)
+
+### Booking
+- id (UUID)
+- experienceId (Foreign Key)
+- slotId (Foreign Key)
+- userName (String)
+- userEmail (String)
+- quantity (Integer)
+- totalAmount (Integer)
+
+### PromoCode
+- id (UUID)
+- code (String)
+- discount (Integer)
+- isActive (Boolean)
+
+## 🎨 Design
+
+Design follows the provided Figma specifications with:
+- Consistent spacing and typography
+- Responsive breakpoints
+- Loading and error states
+- Interactive hover effects
+
+## 🔐 Environment Variables
+
+### Backend
+- `DATABASE_URL` - PostgreSQL connection string
+- `PORT` - Server port (default: 5000)
+
+### Frontend
+- `NEXT_PUBLIC_API_URL` - Backend API URL
+
+## 📦 Deployment
+
+### Backend (Railway)
+1. Connect GitHub repository
+2. Add environment variables
+3. Deploy automatically on push
+
+### Frontend (Vercel)
+1. Import GitHub repository
+2. Add environment variables
+3. Deploy automatically on push
+
+## 🧪 Available Promo Codes
+
+- `SAVE10` - 10% discount
+- `FLAT100` - ₹100 flat discount
+- `WELCOME20` - 20% discount
+
+
+## 📝 License
+
+This project is created as part of a fullstack internship assignment.

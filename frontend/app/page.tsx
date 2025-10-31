@@ -115,7 +115,6 @@ export default function Home() {
 
   const fetchExperiences = async () => {
     try {
-      // Use the API_URL constant directly
       const response = await fetch(`${API_URL}/api/experiences`);
       const data = await response.json();
       
@@ -127,11 +126,12 @@ export default function Home() {
         setFilteredExperiences(mockExperiences);
       }
     } catch (error) {
-    console.error('Error fetching experiences:', error);
-  }  finally {
+      console.error('Error fetching experiences:', error);
+    } finally {
       setIsLoading(false);
     }
   };
+
   const handleCardClick = (id: string) => {
     window.location.href = `/experiences/${id}`;
   };
@@ -149,11 +149,11 @@ export default function Home() {
         <div style={{ 
           maxWidth: '1440px', 
           margin: '0 auto',
-          padding: '16px clamp(16px, 5vw, 124px)',
+          padding: '16px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '20px',
+          gap: '12px',
           flexWrap: 'wrap'
         }}>
           {/* Logo */}
@@ -178,10 +178,11 @@ export default function Home() {
           {/* Search Bar */}
           <div style={{ 
             display: 'flex', 
-            gap: '12px', 
+            gap: '8px', 
             flex: '1',
             maxWidth: '600px',
-            minWidth: '200px'
+            minWidth: '0',
+            width: '100%'
           }}>
             <input
               type="text"
@@ -190,16 +191,17 @@ export default function Home() {
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 flex: 1,
-                padding: '12px 16px',
+                padding: '10px 12px',
                 backgroundColor: '#F9F9F9',
                 border: '1px solid #E9E9E9',
                 borderRadius: '8px',
                 fontSize: '14px',
-                outline: 'none'
+                outline: 'none',
+                minWidth: '0'
               }}
             />
             <button style={{
-              padding: '12px 32px',
+              padding: '10px 20px',
               backgroundColor: '#FFD643',
               border: 'none',
               borderRadius: '8px',
@@ -229,15 +231,15 @@ export default function Home() {
       <main style={{ 
         maxWidth: '1440px',
         margin: '0 auto',
-        padding: '32px clamp(16px, 5vw, 124px)',
+        padding: '20px',
         flex: 1,
         width: '100%'
       }}>
         {isLoading ? (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gap: '24px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', 
+            gap: '20px',
             width: '100%'
           }}>
             {[...Array(8)].map((_, i) => (
@@ -255,7 +257,7 @@ export default function Home() {
             ))}
           </div>
         ) : filteredExperiences.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
             <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>
               No experiences found
@@ -265,8 +267,8 @@ export default function Home() {
         ) : (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gap: '24px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', 
+            gap: '20px',
             width: '100%'
           }}>
             {filteredExperiences.map((exp, index) => (
@@ -437,7 +439,7 @@ export default function Home() {
         <div style={{ 
           maxWidth: '1440px',
           margin: '0 auto',
-          padding: '32px clamp(16px, 5vw, 124px)',
+          padding: '32px 20px',
           textAlign: 'center'
         }}>
           <p style={{ 
