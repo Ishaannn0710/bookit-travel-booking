@@ -115,6 +115,7 @@ export default function Home() {
 
   const fetchExperiences = async () => {
     try {
+      // Use the API_URL constant directly
       const response = await fetch(`${API_URL}/api/experiences`);
       const data = await response.json();
       
@@ -149,15 +150,15 @@ export default function Home() {
         <div style={{ 
           maxWidth: '1440px', 
           margin: '0 auto',
-          padding: '16px 20px',
+          padding: '16px clamp(16px, 5vw, 124px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '12px',
+          gap: '20px',
           flexWrap: 'wrap'
         }}>
           {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <div style={{ 
               width: '32px', 
               height: '32px', 
@@ -178,11 +179,10 @@ export default function Home() {
           {/* Search Bar */}
           <div style={{ 
             display: 'flex', 
-            gap: '8px', 
+            gap: '12px', 
             flex: '1',
             maxWidth: '600px',
-            minWidth: '0',
-            width: '100%'
+            minWidth: '0'
           }}>
             <input
               type="text"
@@ -191,7 +191,7 @@ export default function Home() {
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 flex: 1,
-                padding: '10px 12px',
+                padding: '12px 16px',
                 backgroundColor: '#F9F9F9',
                 border: '1px solid #E9E9E9',
                 borderRadius: '8px',
@@ -201,7 +201,7 @@ export default function Home() {
               }}
             />
             <button style={{
-              padding: '10px 20px',
+              padding: '12px 32px',
               backgroundColor: '#FFD643',
               border: 'none',
               borderRadius: '8px',
@@ -209,7 +209,8 @@ export default function Home() {
               fontSize: '14px',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              flexShrink: 0
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#FFC833';
@@ -231,7 +232,7 @@ export default function Home() {
       <main style={{ 
         maxWidth: '1440px',
         margin: '0 auto',
-        padding: '20px',
+        padding: '32px clamp(16px, 5vw, 124px)',
         flex: 1,
         width: '100%'
       }}>
@@ -239,7 +240,7 @@ export default function Home() {
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', 
-            gap: '20px',
+            gap: '24px',
             width: '100%'
           }}>
             {[...Array(8)].map((_, i) => (
@@ -257,7 +258,7 @@ export default function Home() {
             ))}
           </div>
         ) : filteredExperiences.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+          <div style={{ textAlign: 'center', padding: '80px 0' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
             <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>
               No experiences found
@@ -268,7 +269,7 @@ export default function Home() {
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', 
-            gap: '20px',
+            gap: '24px',
             width: '100%'
           }}>
             {filteredExperiences.map((exp, index) => (
@@ -439,7 +440,7 @@ export default function Home() {
         <div style={{ 
           maxWidth: '1440px',
           margin: '0 auto',
-          padding: '32px 20px',
+          padding: '32px clamp(16px, 5vw, 124px)',
           textAlign: 'center'
         }}>
           <p style={{ 

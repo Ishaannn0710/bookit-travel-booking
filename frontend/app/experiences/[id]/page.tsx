@@ -19,36 +19,39 @@ export default function ExperienceDetails() {
   }, []);
 
   const fetchExperience = async () => {
-    try {
-      const pathParts = window.location.pathname.split('/');
-      const id = pathParts[pathParts.length - 1];
+  try {
+    // Get experience ID from URL
+    const pathParts = window.location.pathname.split('/');
+    const id = pathParts[pathParts.length - 1];
 
-      console.log('Fetching experience with ID:', id);
+    console.log('Fetching experience with ID:', id); // Debug log
 
-      const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/experiences/${id}`);
-      const data = await response.json();
+    const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/experiences/${id}`);
+    const data = await response.json();
 
-      console.log('API Response:', data);
+    console.log('API Response:', data); // Debug log
 
-      if (data.success && data.data) {
-        setExperience(data.data.experience);
-        setSlots(data.data.slots || []);
-        
-        if (data.data.slots && data.data.slots.length > 0) {
-          const firstSlot = data.data.slots[0];
-          const date = new Date(firstSlot.date);
-          setSelectedDate(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-          setSelectedTime(firstSlot.time);
-          setSelectedSlot(firstSlot);
-        }
+    if (data.success && data.data) {
+      setExperience(data.data.experience);
+      setSlots(data.data.slots || []);
+      
+      // Set default selected date and time if slots available
+      if (data.data.slots && data.data.slots.length > 0) {
+        const firstSlot = data.data.slots[0];
+        const date = new Date(firstSlot.date);
+        setSelectedDate(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        setSelectedTime(firstSlot.time);
+        setSelectedSlot(firstSlot);
       }
-    } catch (error) {
-      console.error('Error fetching experience:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching experience:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
+  // Group slots by date
   const getUniqueDates = () => {
     const dateMap = new Map();
     slots.forEach(slot => {
@@ -61,6 +64,7 @@ export default function ExperienceDetails() {
     return Array.from(dateMap.entries()).slice(0, 5);
   };
 
+  // Get times for selected date
   const getTimesForDate = () => {
     return slots.filter(slot => {
       const date = new Date(slot.date);
@@ -127,11 +131,11 @@ export default function ExperienceDetails() {
         <div style={{
           maxWidth: '1440px',
           margin: '0 auto',
-          padding: '16px 20px',
+          padding: '16px clamp(16px, 5vw, 124px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '12px'
+          gap: '20px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{
@@ -151,7 +155,7 @@ export default function ExperienceDetails() {
             </div>
           </div>
           <button style={{
-            padding: '10px 20px',
+            padding: '12px 32px',
             backgroundColor: '#FFD643',
             border: 'none',
             borderRadius: '8px',
@@ -177,7 +181,7 @@ export default function ExperienceDetails() {
       <main style={{
         maxWidth: '1440px',
         margin: '0 auto',
-        padding: '0 20px'
+        padding: '0 clamp(16px, 5vw, 124px)'
       }}>
         <button
           onClick={() => window.history.back()}
@@ -191,7 +195,7 @@ export default function ExperienceDetails() {
             fontSize: '14px',
             fontWeight: 600,
             color: '#000000',
-            padding: '20px 0',
+            padding: '24px 0',
             marginBottom: '16px',
             transition: 'all 0.2s ease'
           }}
@@ -208,14 +212,15 @@ export default function ExperienceDetails() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: window.innerWidth >= 768 ? '1fr 387px' : '1fr',
-          gap: '24px'
+          gridTemplateColumns: window.innerWidth >= 1024 ? '765px 387px' : '1fr',
+          gap: '32px'
         }}>
           {/* Left Column */}
           <div>
             <div style={{
               width: '100%',
-              height: window.innerWidth >= 768 ? '381px' : '240px',
+              maxWidth: '765px',
+              height: window.innerWidth >= 640 ? '381px' : '240px',
               borderRadius: '12px',
               overflow: 'hidden',
               marginBottom: '24px',
@@ -233,7 +238,7 @@ export default function ExperienceDetails() {
             </div>
 
             <h1 style={{
-              fontSize: window.innerWidth >= 768 ? '32px' : '24px',
+              fontSize: '32px',
               fontWeight: 700,
               marginBottom: '12px',
               color: '#000000'
@@ -307,9 +312,9 @@ export default function ExperienceDetails() {
               </h3>
               <div style={{ display: 'flex', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 {getTimesForDate().map((slot, index) => {
-                  const available = slot.capacity - slot.bookedCount;
-                  const isSoldOut = available === 0 || index === 3;
-                  return (
+  const available = slot.capacity - slot.bookedCount;
+  const isSoldOut = available === 0 || index === 3; // Make 4th slot (1:00 pm) always sold out
+  return (
                     <button
                       key={slot.id}
                       onClick={() => !isSoldOut && handleTimeSelect(slot)}
@@ -386,8 +391,7 @@ export default function ExperienceDetails() {
           {/* Right Column - Booking Card */}
           <div>
             <div style={{
-              position: window.innerWidth >= 768 ? 'sticky' : 'relative',
-              top: window.innerWidth >= 768 ? '100px' : '0',
+              position: 'relative',
               backgroundColor: '#FEFEFE',
               border: '1px solid #F0F0F0',
               borderRadius: '12px',
@@ -514,6 +518,7 @@ export default function ExperienceDetails() {
                     alert(`Only ${availableSeats} seats available`);
                     return;
                   }
+                  // Store booking data in sessionStorage for checkout
                   sessionStorage.setItem('bookingData', JSON.stringify({
                     experience: experience.title,
                     slotId: selectedSlot.id,
