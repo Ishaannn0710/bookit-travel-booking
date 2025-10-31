@@ -15,81 +15,6 @@ interface Experience {
   category: string;
 }
 
-const mockExperiences: Experience[] = [
-  {
-    id: '1',
-    title: 'Kayaking',
-    location: 'Udupi',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 999,
-    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop',
-    category: 'Water Sports'
-  },
-  {
-    id: '2',
-    title: 'Nandi Hills Sunrise',
-    location: 'Bangalore',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 899,
-    imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
-    category: 'Adventure'
-  },
-  {
-    id: '3',
-    title: 'Coffee Trail',
-    location: 'Coorg',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 1299,
-    imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop',
-    category: 'Nature'
-  },
-  {
-    id: '4',
-    title: 'Kayaking',
-    location: 'Udupi, Karnataka',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 999,
-    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop',
-    category: 'Water Sports'
-  },
-  {
-    id: '5',
-    title: 'Nandi Hills Sunrise',
-    location: 'Bangalore',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 899,
-    imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
-    category: 'Adventure'
-  },
-  {
-    id: '6',
-    title: 'Boat Cruise',
-    location: 'Sunderban',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 999,
-    imageUrl: 'https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=600&h=400&fit=crop',
-    category: 'Water Sports'
-  },
-  {
-    id: '7',
-    title: 'Bunjee Jumping',
-    location: 'Manali',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 999,
-    imageUrl: 'https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?w=600&h=400&fit=crop',
-    category: 'Adventure'
-  },
-  {
-    id: '8',
-    title: 'Coffee Trail',
-    location: 'Coorg',
-    description: 'Curated small-group experience. Certified guide. Safety first with gear included.',
-    price: 1299,
-    imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop',
-    category: 'Nature'
-  }
-];
-
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -122,10 +47,7 @@ export default function Home() {
       if (data.data && data.data.length >= 8) {
         setExperiences(data.data);
         setFilteredExperiences(data.data);
-      } else {
-        setExperiences(mockExperiences);
-        setFilteredExperiences(mockExperiences);
-      }
+      } 
     } catch (error) {
       console.error('Error fetching experiences:', error);
     } finally {
