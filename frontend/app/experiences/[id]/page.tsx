@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, MapPin, Minus, Plus, WifiOff } from 'lucide-react';
 
 const API_URL = 'https://bookit-travel-booking-production.up.railway.app';
 
@@ -15,6 +15,8 @@ export default function ExperienceDetails() {
   const [quantity, setQuantity] = useState(1);
   const [isDesktop, setIsDesktop] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showNetworkError, setShowNetworkError] = useState(false);
 
   useEffect(() => {
     fetchExperience();
@@ -33,37 +35,50 @@ export default function ExperienceDetails() {
   }, []);
 
   const fetchExperience = async () => {
-  try {
-    // Get experience ID from URL
-    const pathParts = window.location.pathname.split('/');
-    const id = pathParts[pathParts.length - 1];
+    try {
+      // Get experience ID from URL
+      const pathParts = window.location.pathname.split('/');
+      const id = pathParts[pathParts.length - 1];
 
-    console.log('Fetching experience with ID:', id); // Debug log
+      console.log('Fetching experience with ID:', id);
 
-    const response = await fetch(`https://bookit-travel-booking-production.up.railway.app/api/experiences/${id}`);
-    const data = await response.json();
+      const response = await fetch(`${API_URL}/api/experiences/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    console.log('API Response:', data); // Debug log
-
-    if (data.success && data.data) {
-      setExperience(data.data.experience);
-      setSlots(data.data.slots || []);
-      
-      // Set default selected date and time if slots available
-      if (data.data.slots && data.data.slots.length > 0) {
-        const firstSlot = data.data.slots[0];
-        const date = new Date(firstSlot.date);
-        setSelectedDate(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        setSelectedTime(firstSlot.time);
-        setSelectedSlot(firstSlot);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
+      console.log('API Response:', data);
+
+      if (data.success && data.data) {
+        setExperience(data.data.experience);
+        setSlots(data.data.slots || []);
+        
+        // Set default selected date and time if slots available
+        if (data.data.slots && data.data.slots.length > 0) {
+          const firstSlot = data.data.slots[0];
+          const date = new Date(firstSlot.date);
+          setSelectedDate(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+          setSelectedTime(firstSlot.time);
+          setSelectedSlot(firstSlot);
+        }
+      } else {
+        setError('Experience not found');
+      }
+    } catch (error) {
+      console.error('Error fetching experience:', error);
+      setShowNetworkError(true);
+      setError('Failed to load experience');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error fetching experience:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Group slots by date
   const getUniqueDates = () => {
@@ -105,23 +120,254 @@ export default function ExperienceDetails() {
     setSelectedSlot(slot);
   };
 
-  if (loading) {
+  // Network Error Alert Modal
+  if (showNetworkError) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#F9F9F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ width: '40px', height: '40px', border: '3px solid #E9E9E9', borderTopColor: '#FFD643', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
-          <p style={{ color: '#6B7280' }}>Loading...</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#F9F9F9' }}>
+        {/* Header */}
+        <header style={{
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid #E9E9E9',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
+        }}>
+          <div style={{
+            maxWidth: '1440px',
+            margin: '0 auto',
+            padding: '16px clamp(16px, 5vw, 124px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                backgroundColor: '#000000',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <MapPin style={{ width: '20px', height: '20px', color: '#FFD643' }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+                <span style={{ fontWeight: 700, fontSize: '14px', color: '#000000' }}>highway</span>
+                <span style={{ fontWeight: 700, fontSize: '14px', color: '#000000' }}>delite</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Network Error Alert */}
+        <div style={{
+          minHeight: 'calc(100vh - 72px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '40px',
+            maxWidth: '480px',
+            width: '100%',
+            textAlign: 'center',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+            border: '1px solid #F0F0F0'
+          }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#FEE2E2',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 24px'
+            }}>
+              <WifiOff style={{ width: '40px', height: '40px', color: '#EF4444' }} />
+            </div>
+
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: 700,
+              color: '#000000',
+              marginBottom: '12px'
+            }}>
+              Connection Error
+            </h2>
+
+            <p style={{
+              fontSize: '14px',
+              color: '#6B7280',
+              lineHeight: '1.6',
+              marginBottom: '32px'
+            }}>
+              Unable to load the experience. Please check your internet connection and try again.
+            </p>
+
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'center',
+              flexWrap: 'wrap'
+            }}>
+              <button
+                onClick={() => {
+                  setShowNetworkError(false);
+                  setLoading(true);
+                  setError(null);
+                  fetchExperience();
+                }}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#FFD643',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFC833';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#FFD643';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                Try Again
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/'}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#E9E9E9',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#D9D9D9';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#E9E9E9';
+                }}
+              >
+                Go Home
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!experience) {
+  if (loading) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: '#F9F9F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Experience not found</h3>
-          <button onClick={() => window.location.href = '/'} style={{ padding: '12px 24px', backgroundColor: '#FFD643', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Go Home</button>
+          <div style={{ width: '40px', height: '40px', border: '3px solid #E9E9E9', borderTopColor: '#FFD643', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+          <p style={{ color: '#6B7280' }}>Loading experience...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!experience || error) {
+    return (
+      <div style={{ minHeight: '100vh', backgroundColor: '#F9F9F9' }}>
+        {/* Header */}
+        <header style={{
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid #E9E9E9',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
+        }}>
+          <div style={{
+            maxWidth: '1440px',
+            margin: '0 auto',
+            padding: '16px clamp(16px, 5vw, 124px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '20px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                backgroundColor: '#000000',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <MapPin style={{ width: '20px', height: '20px', color: '#FFD643' }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+                <span style={{ fontWeight: 700, fontSize: '14px', color: '#000000' }}>highway</span>
+                <span style={{ fontWeight: 700, fontSize: '14px', color: '#000000' }}>delite</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Not Found */}
+        <div style={{
+          minHeight: 'calc(100vh - 72px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '64px',
+              marginBottom: '16px'
+            }}>
+              🔍
+            </div>
+            <h3 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '12px', color: '#000000' }}>
+              Experience Not Found
+            </h3>
+            <p style={{ fontSize: '14px', color: '#6B7280', marginBottom: '24px' }}>
+              The experience you're looking for doesn't exist or has been removed.
+            </p>
+            <button 
+              onClick={() => window.location.href = '/'} 
+              style={{ 
+                padding: '12px 24px', 
+                backgroundColor: '#FFD643', 
+                border: 'none', 
+                borderRadius: '8px', 
+                fontWeight: 600, 
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#FFC833';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#FFD643';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Go Home
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -326,9 +572,9 @@ export default function ExperienceDetails() {
               </h3>
               <div style={{ display: 'flex', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 {getTimesForDate().map((slot, index) => {
-  const available = slot.capacity - slot.bookedCount;
-  const isSoldOut = available === 0 || index === 3; // Make 4th slot (1:00 pm) always sold out
-  return (
+                  const available = slot.capacity - slot.bookedCount;
+                  const isSoldOut = available === 0 || index === 3;
+                  return (
                     <button
                       key={slot.id}
                       onClick={() => !isSoldOut && handleTimeSelect(slot)}
@@ -532,7 +778,6 @@ export default function ExperienceDetails() {
                     alert(`Only ${availableSeats} seats available`);
                     return;
                   }
-                  // Store booking data in sessionStorage for checkout
                   sessionStorage.setItem('bookingData', JSON.stringify({
                     experience: experience.title,
                     slotId: selectedSlot.id,
@@ -561,7 +806,7 @@ export default function ExperienceDetails() {
                   e.currentTarget.style.backgroundColor = '#FFD643';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                   e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 214, 67, 0.4)';
-                }}
+                  }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = '#E9E9E9';
                   e.currentTarget.style.transform = 'translateY(0)';
