@@ -13,9 +13,23 @@ export default function ExperienceDetails() {
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
     fetchExperience();
+  }, []);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+      setIsTablet(window.innerWidth >= 640);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   const fetchExperience = async () => {
@@ -212,7 +226,7 @@ export default function ExperienceDetails() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: window.innerWidth >= 1024 ? '765px 387px' : '1fr',
+          gridTemplateColumns: isDesktop ? '765px 387px' : '1fr',
           gap: '32px'
         }}>
           {/* Left Column */}
@@ -220,7 +234,7 @@ export default function ExperienceDetails() {
             <div style={{
               width: '100%',
               maxWidth: '765px',
-              height: window.innerWidth >= 640 ? '381px' : '240px',
+              height: isTablet ? '381px' : '240px',
               borderRadius: '12px',
               overflow: 'hidden',
               marginBottom: '24px',

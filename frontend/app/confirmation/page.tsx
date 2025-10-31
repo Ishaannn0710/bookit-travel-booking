@@ -1,10 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, MapPin } from 'lucide-react';
 
 export default function Confirmation() {
+  const [isMobile, setIsMobile] = useState(false);
   const referenceId = 'HUF56&SO';
+
+  useEffect(() => {
+    // Safely check window size on client side only
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#F9F9F9' }}>
@@ -51,7 +64,16 @@ export default function Confirmation() {
             borderRadius: '8px',
             fontWeight: 600,
             fontSize: '14px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFC833';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFD643';
+            e.currentTarget.style.transform = 'translateY(0)';
           }}>
             Search
           </button>
@@ -71,18 +93,19 @@ export default function Confirmation() {
       }}>
         {/* Success Icon */}
         <div style={{
-          width: window.innerWidth >= 640 ? '80px' : '64px',
-          height: window.innerWidth >= 640 ? '80px' : '64px',
+          width: isMobile ? '64px' : '80px',
+          height: isMobile ? '64px' : '80px',
           backgroundColor: '#10B981',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: window.innerWidth >= 640 ? '32px' : '24px'
+          marginBottom: isMobile ? '24px' : '32px',
+          transition: 'all 0.3s ease'
         }}>
           <Check style={{ 
-            width: window.innerWidth >= 640 ? '48px' : '36px', 
-            height: window.innerWidth >= 640 ? '48px' : '36px', 
+            width: isMobile ? '36px' : '48px', 
+            height: isMobile ? '36px' : '48px', 
             color: '#FFFFFF', 
             strokeWidth: 3 
           }} />
@@ -90,7 +113,7 @@ export default function Confirmation() {
 
         {/* Heading */}
         <h1 style={{
-          fontSize: window.innerWidth >= 640 ? '32px' : '24px',
+          fontSize: isMobile ? '24px' : '32px',
           fontWeight: 700,
           color: '#000000',
           margin: '0 0 16px 0',
@@ -101,7 +124,7 @@ export default function Confirmation() {
 
         {/* Reference ID */}
         <p style={{
-          fontSize: window.innerWidth >= 640 ? '16px' : '14px',
+          fontSize: isMobile ? '14px' : '16px',
           color: '#6B7280',
           margin: '0 0 32px 0',
           textAlign: 'center'
@@ -120,7 +143,16 @@ export default function Confirmation() {
             fontSize: '14px',
             fontWeight: 600,
             color: '#000000',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#FFD643';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#E9E9E9';
+            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           Back to Home

@@ -13,6 +13,8 @@ export default function Checkout() {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [discount, setDiscount] = useState(0);
   const [promoApplied, setPromoApplied] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
 
   useEffect(() => {
     const storedData = sessionStorage.getItem('bookingData');
@@ -29,6 +31,18 @@ export default function Checkout() {
         total: 958
       });
     }
+  }, []);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsSmallMobile(window.innerWidth < 400);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   const getCurrentTime = () => {
@@ -147,7 +161,7 @@ export default function Checkout() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: window.innerWidth >= 768 ? '1fr 387px' : '1fr',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 387px',
           gap: '24px'
         }}>
           {/* Left Column - Form */}
@@ -160,7 +174,7 @@ export default function Checkout() {
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: window.innerWidth >= 640 ? '1fr 1fr' : '1fr',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
               gap: '16px',
               marginBottom: '16px'
             }}>
@@ -249,7 +263,7 @@ export default function Checkout() {
               }}>
                 Promo code
               </label>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: window.innerWidth < 400 ? 'wrap' : 'nowrap' }}>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: isSmallMobile ? 'wrap' : 'nowrap' }}>
                 <input
                   type="text"
                   placeholder="Enter code"
@@ -257,7 +271,7 @@ export default function Checkout() {
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   style={{
                     flex: '1',
-                    minWidth: window.innerWidth < 400 ? '100%' : '0',
+                    minWidth: isSmallMobile ? '100%' : '0',
                     padding: '12px 16px',
                     backgroundColor: '#EFEFEF',
                     border: '1px solid #E9E9E9',
@@ -317,7 +331,7 @@ export default function Checkout() {
                     fontWeight: 600,
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
-                    width: window.innerWidth < 400 ? '100%' : 'auto',
+                    width: isSmallMobile ? '100%' : 'auto',
                     transition: 'all 0.3s ease'
                   }}
                   onMouseEnter={(e) => {
